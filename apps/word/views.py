@@ -2,12 +2,13 @@ from django.http import JsonResponse
 from django.views import View
 
 from .models import Word
+from .serializer import WordSerializer
 
 
 # Create your views here.
 
 
-class word_w_view(View):
+class wView(View):
 
     def get(self, request, word_id):
         word = Word.objects.get(id=word_id)
@@ -29,7 +30,7 @@ class word_w_view(View):
             })
 
 
-class word_ws_view(View):
+class wsView(View):
 
     def get(self, request, word_spell):
         word = Word.objects.get(spell=word_spell)
@@ -49,3 +50,12 @@ class word_ws_view(View):
                 'raw': word.raw,
                 'parsed': word.parsed
             })
+
+
+class sView(View):
+
+    def get(self, request, fragment):
+        words = Word.objects.filter(spell__regex="^%s." % fragment)
+        words_se = WordSerializer(words, many=True)
+
+        return JsonResponse(words_se.data, safe=False)
