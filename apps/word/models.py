@@ -9,7 +9,7 @@ from django.db import models
 
 
 class Word(models.Model):
-    id = models.TextField(blank=True, primary_key=True)
+    id = models.TextField(primary_key=True, unique=True)
     spell = models.TextField(unique=True)
     pos = models.TextField(blank=True, null=True)
     cn_etym = models.TextField(blank=True, null=True)
@@ -25,3 +25,24 @@ class Word(models.Model):
     class Meta:
         managed = False
         db_table = 'word'
+
+
+class WordWordlist(models.Model):
+    id = models.IntegerField(primary_key=True, unique=True)
+    word_id = models.ForeignKey('Word', models.CASCADE)
+    wordlist_id = models.ForeignKey('Wordlist', models.DO_NOTHING)
+
+    class Meta:
+        managed = False
+        db_table = 'word_wordlist'
+
+
+class Wordlist(models.Model):
+    word = models.ManyToManyField('Word', through='WordWordlist')
+    name = models.TextField(blank=True, null=True)
+    create_time = models.DateField(blank=True, null=True)
+    word_count = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'wordlist'
