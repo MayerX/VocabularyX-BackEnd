@@ -8,8 +8,17 @@
 from django.db import models
 
 
+class DBForerinkey(models.ForeignKey):
+    def db_type(self, connection):
+        return 'text'
+
+    def rel_db_type(self, connection):
+        return 'text'
+
+
 class Word(models.Model):
-    id = models.TextField(primary_key=True, unique=True)
+    id = DBForerinkey('WordWordlist', models.CASCADE,
+                           primary_key=True, unique=True, to_field='word_id')
     spell = models.TextField(unique=True)
     pos = models.TextField(blank=True, null=True)
     cn_etym = models.TextField(blank=True, null=True)
@@ -28,9 +37,8 @@ class Word(models.Model):
 
 
 class WordWordlist(models.Model):
-    id = models.IntegerField(primary_key=True, unique=True)
-    word_id = models.ForeignKey('Word', models.CASCADE)
-    wordlist_id = models.ForeignKey('Wordlist', models.DO_NOTHING)
+    word_id = models.TextField(unique=True)
+    wordlist_id = models.TextField(unique=True)
 
     class Meta:
         managed = False
@@ -38,7 +46,8 @@ class WordWordlist(models.Model):
 
 
 class Wordlist(models.Model):
-    word = models.ManyToManyField('Word', through='WordWordlist')
+    id = DBForerinkey('WordWordlist', models.DO_NOTHING,
+                           primary_key=True, unique=True, to_field='wordlist_id')
     name = models.TextField(blank=True, null=True)
     create_time = models.DateField(blank=True, null=True)
     word_count = models.IntegerField(blank=True, null=True)
