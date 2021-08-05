@@ -8,17 +8,8 @@
 from django.db import models
 
 
-class DBForerinkey(models.ForeignKey):
-    def db_type(self, connection):
-        return 'text'
-
-    def rel_db_type(self, connection):
-        return 'text'
-
-
 class Word(models.Model):
-    id = DBForerinkey('WordWordlist', models.CASCADE,
-                           primary_key=True, unique=True, to_field='word_id')
+    id = models.TextField(primary_key=True, unique=True)
     spell = models.TextField(unique=True)
     pos = models.TextField(blank=True, null=True)
     cn_etym = models.TextField(blank=True, null=True)
@@ -32,26 +23,23 @@ class Word(models.Model):
     parsed = models.IntegerField()
 
     class Meta:
-        managed = False
         db_table = 'word'
 
 
 class WordWordlist(models.Model):
-    word_id = models.TextField(unique=True)
-    wordlist_id = models.TextField(unique=True)
+    word_id = models.ForeignKey('Word', models.CASCADE, unique=True)
+    wordlist_id = models.ForeignKey('Wordlist', models.DO_NOTHING, unique=True)
 
     class Meta:
-        managed = False
         db_table = 'word_wordlist'
 
 
 class Wordlist(models.Model):
-    id = DBForerinkey('WordWordlist', models.DO_NOTHING,
-                           primary_key=True, unique=True, to_field='wordlist_id')
+    id = models.TextField(primary_key=True, unique=True)
     name = models.TextField(blank=True, null=True)
+    word = models.ManyToManyField(Word, through='WordWordlist')
     create_time = models.DateField(blank=True, null=True)
     word_count = models.IntegerField(blank=True, null=True)
 
     class Meta:
-        managed = False
         db_table = 'wordlist'
