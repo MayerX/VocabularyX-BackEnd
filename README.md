@@ -1,5 +1,10 @@
 # VocabularyX-BackEnd
 
+## Questions
+
+1. Plan表中，没有制定多少个section
+2. 
+
 # Entities
 
 ## WordList
@@ -8,8 +13,11 @@
 interface WordList {
     id: string,
     name: string,
+      //创建时生成且不变
     create_time: Date,
+      //每次改动就改变
     update_time: Date,
+      //每次put的时候自动计算
     word_count: int
 }
 ```

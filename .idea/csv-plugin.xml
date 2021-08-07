@@ -10,6 +10,20 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="/apps/plan/models.py">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/apps/plan/views.py">
+          <value>
+            <Attribute>
+              <option name="separator" value=":" />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="/apps/word/models.py">
           <value>
             <Attribute>

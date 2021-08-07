@@ -122,13 +122,15 @@ class wlView(View):
     def put(self, request):
         id = request.GET['id']
         wordlist = Wordlist.objects.get(id=id)
+        num = Wordlist.word.all()
+
         parms = str(request.body, 'utf-8').split('&')
         for parm in parms:
             parm = parm.split('=')
             if parm[0] == 'name':
                 wordlist.name = parm[1]
-                wordlist.save()
-                break
+        wordlist.word_count = num
+        wordlist.save()
 
         return JsonResponse(
             status=200,

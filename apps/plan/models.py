@@ -5,26 +5,27 @@ from apps.word import models as word_model
 
 # Create your models here.
 
-class Section(models.Model):
-    id = models.TextField(primary_key=True, unique=True)
-    duration = models.IntegerField()
-    index = models.IntegerField()
-    words = models.ManyToManyField(word_model.Word, through='WordSection')
-
-    class Meta:
-        db_table = 'section'
-
 
 class Plan(models.Model):
     id = models.TextField(primary_key=True, unique=True)
-    name = models.TextField()
-    start_time = models.DateField()
-    end_time = models.DateField()
-    duration = models.IntegerField()
-    sections = models.ForeignKey(Section, models.CASCADE)
+    name = models.TextField(blank=True, null=True)
+    start_time = models.DateField(blank=True, null=True)
+    end_time = models.DateField(blank=True, null=True)
+    duration = models.IntegerField(blank=True, null=True)
 
     class Meta:
         db_table = 'plan'
+
+
+class Section(models.Model):
+    id = models.TextField(primary_key=True, unique=True)
+    duration = models.IntegerField(blank=True, null=True)
+    index = models.IntegerField(blank=True, null=True)
+    words = models.ManyToManyField(word_model.Word, through='WordSection')
+    plan = models.ForeignKey(Plan, models.CASCADE, blank=True, null=True, to_field='id')
+
+    class Meta:
+        db_table = 'section'
 
 
 class WordSection(models.Model):
