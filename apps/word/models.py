@@ -38,7 +38,8 @@ class Wordlist(models.Model):
     id = models.TextField(primary_key=True, unique=True)
     name = models.TextField(blank=True, null=True)
     word = models.ManyToManyField(Word, through='WordWordlist')
-    create_time = models.DateField(blank=True, null=True)
+    create_time = models.DateField(auto_now_add=True)
+    update_time = models.DateField(auto_now=True)
     word_count = models.IntegerField(blank=True, null=True)
 
     class Meta:

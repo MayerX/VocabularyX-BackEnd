@@ -1,11 +1,11 @@
-import json
+import uuid
 
 import demjson
 from django.http import JsonResponse
 from django.views import View
 
-from .models import Word
-from .serializer import WordSerializer
+from .models import Word, Wordlist
+from .serializer import WordSerializer, WordlistSerializer
 
 # Create your views here.
 
@@ -23,7 +23,12 @@ class wView(View):
         for key in keys:
             word_dict[key] = demjson.decode(word_dict[key])
 
-        return JsonResponse(word_dict, safe=False)
+        data = {
+            "word": word_dict,
+            "msg": 'succeed'
+        }
+
+        return JsonResponse(data=data)
 
 
 class wsView(View):
@@ -37,7 +42,12 @@ class wsView(View):
         for key in keys:
             word_dict[key] = demjson.decode(word_dict[key])
 
-        return JsonResponse(word_dict, safe=False)
+        data = {
+            "word": word_dict,
+            "msg": "succeed"
+        }
+
+        return JsonResponse(data=data)
 
 
 class sView(View):
@@ -51,4 +61,73 @@ class sView(View):
                 if word[key] is not None:
                     word[key] = demjson.decode(word[key])
 
-        return JsonResponse(words_se.data, safe=False)
+        data = {
+            "words": words_se.data,
+            "msg": 'succeed'
+        }
+
+        return JsonResponse(data=data)
+        # return JsonResponse(words_se.data, safe=False)
+
+
+class wlsView(View):
+
+    def get(self, request):
+        wordlists = Wordlist.objects.all()
+        wordlists_se = WordlistSerializer(wordlists, many=True)
+
+        return JsonResponse(wordlists_se.data, safe=False)
+
+
+class wlView(View):
+
+    def get(self, request):
+        id = request.GET['id']
+        wordlist = Wordlist.objects.get(id=id)
+        wordlist_se = WordlistSerializer(wordlist)
+
+        return JsonResponse(wordlist_se.data, safe=False)
+
+    def post(self, request):
+        name = request.POST['name']
+        id = str(uuid.uuid4())[-11:-1]
+        new_wordlist = Wordlist.objects.create(id=id)
+        new_wordlist.name = name
+        new_wordlist.word_count = 0
+        new_wordlist.save()
+
+        return JsonResponse(
+            status=200,
+            data={
+                'msg': 'succeed'
+            }
+        )
+
+    def put(self, request):
+        id = request.GET['id']
+        wordlist = Wordlist.objects.get(id=id)
+        parms = str(request.body, 'utf-8').split('&')
+        for parm in parms:
+            parm = parm.split('=')
+            if parm[0] == 'name':
+                wordlist.name = parm[1]
+                wordlist.save()
+                break
+
+        return JsonResponse(
+            status=200,
+            data={
+                'msg': 'succeed'
+            }
+        )
+
+    def delete(self, request):
+        id = request.GET['id']
+        Wordlist.objects.get(id=id).delete()
+
+        return JsonResponse(
+            status=200,
+            data={
+                'msg': 'succeed'
+            }
+        )

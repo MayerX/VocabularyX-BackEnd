@@ -1,5 +1,4 @@
 from rest_framework import serializers
-import demjson
 
 
 class WordSerializer(serializers.Serializer):
@@ -15,3 +14,12 @@ class WordSerializer(serializers.Serializer):
     updated = serializers.IntegerField()
     raw = serializers.CharField()
     parsed = serializers.IntegerField()
+
+
+class WordlistSerializer(serializers.Serializer):
+    id = serializers.CharField()
+    name = serializers.CharField()
+    create_time = serializers.DateField()
+    update_time = serializers.DateField()
+    word_count = serializers.IntegerField()
+    word = serializers.SlugRelatedField(many=True, read_only=True, slug_field='word')
