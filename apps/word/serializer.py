@@ -22,4 +22,4 @@ class WordlistSerializer(serializers.Serializer):
     create_time = serializers.DateField()
     update_time = serializers.DateField()
     word_count = serializers.IntegerField()
-    word = serializers.SlugRelatedField(many=True, read_only=True, slug_field='word')
+    word = WordSerializer(many=True, read_only=True)

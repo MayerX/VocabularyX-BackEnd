@@ -9,5 +9,7 @@ urlpatterns = [
     re_path('s/(?P<fragment>\w+)', views.sView.as_view()),
     re_path('wl/', views.wlView.as_view()),
     re_path('wls/', views.wlsView.as_view()),
+    re_path('wadd/(?P<word_id>[a-z0-9]{10})/(?P<wordlist_id>[a-z0-9]{10})', views.waddView.as_view()),
+    re_path('wdel/(?P<word_id>[a-z0-9]{10})/(?P<wordlist_id>[a-z0-9]{10})', views.wdelView.as_view()),
     # re_path('wls/')
 ]

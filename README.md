@@ -139,17 +139,15 @@ interface Plan {
 
 - 请求参数
 
-| 参数名 | 类型   | 说明   |
-| ------ | ------ | ------ |
-| spell  | string | 单词ID |
+| 参数名 | 类型   | 说明     |
+| ------ | ------ | -------- |
+| spell  | string | 单词name |
 
 - 返回数据
 
 ```json
  {
-     "id": string,
-     "spell": string,
-  ...  // all word properties
+   // 参考/w/:id的response部分
  }
 ```
 

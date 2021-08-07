@@ -4,7 +4,7 @@ import demjson
 from django.http import JsonResponse
 from django.views import View
 
-from .models import Word, Wordlist
+from .models import Word, Wordlist, WordWordlist
 from .serializer import WordSerializer, WordlistSerializer
 
 # Create your views here.
@@ -75,8 +75,12 @@ class wlsView(View):
     def get(self, request):
         wordlists = Wordlist.objects.all()
         wordlists_se = WordlistSerializer(wordlists, many=True)
+        data = {
+            "wordlists": wordlists_se.data,
+            "msg": "succeed"
+        }
 
-        return JsonResponse(wordlists_se.data, safe=False)
+        return JsonResponse(data=data, safe=False)
 
 
 class wlView(View):
@@ -85,8 +89,12 @@ class wlView(View):
         id = request.GET['id']
         wordlist = Wordlist.objects.get(id=id)
         wordlist_se = WordlistSerializer(wordlist)
+        data = {
+            "wordlist": wordlist_se.data,
+            "msg": "succeed"
+        }
 
-        return JsonResponse(wordlist_se.data, safe=False)
+        return JsonResponse(data=data, status=200)
 
     def post(self, request):
         name = request.POST['name']
@@ -130,4 +138,34 @@ class wlView(View):
             data={
                 'msg': 'succeed'
             }
+        )
+
+
+class waddView(View):
+
+    def get(self, request, word_id, wordlist_id):
+        # WordWordlist(word_id=word_id, wordlist_id=wordlist_id)
+        wordlist = Wordlist.objects.get(id=wordlist_id)
+        word = Word.objects.get(id=word_id)
+        wordlist.word.add(word)
+
+        return JsonResponse(
+            data={
+                "msg": "succeed",
+            },
+            status='200'
+        )
+
+class wdelView(View):
+
+    def get(self, request, word_id, wordlist_id):
+        wordlist = Wordlist.objects.get(id=wordlist_id)
+        word = Word.objects.get(id=word_id)
+        wordlist.word.remove(word)
+
+        return JsonResponse(
+            data={
+                "msg": "succeed"
+            },
+            status='200',
         )
