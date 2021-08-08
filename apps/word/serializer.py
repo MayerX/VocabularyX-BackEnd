@@ -12,7 +12,6 @@ class WordSerializer(serializers.Serializer):
     word_forms = serializers.CharField()
     audio_sources = serializers.CharField()
     updated = serializers.IntegerField()
-    raw = serializers.CharField()
     parsed = serializers.IntegerField()
 
 
