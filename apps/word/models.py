@@ -19,7 +19,6 @@ class Word(models.Model):
     word_forms = models.TextField(blank=True, null=True)
     audio_sources = models.TextField(blank=True, null=True)
     updated = models.IntegerField(blank=True, null=True)
-    raw = models.TextField(blank=True, null=True)
     parsed = models.IntegerField()
 
     class Meta:
