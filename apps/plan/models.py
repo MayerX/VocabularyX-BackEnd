@@ -18,6 +18,14 @@ class Plan(models.Model):
         db_table = 'plan'
 
 
+class WordSection(models.Model):
+    word_id = models.ForeignKey(word_model.Word, models.CASCADE)
+    section_id = models.ForeignKey('Section', models.DO_NOTHING)
+
+    class Meta:
+        db_table = 'word_section'
+
+
 class Section(models.Model):
     id = models.TextField(primary_key=True, unique=True)
     duration = models.IntegerField(blank=True, null=True)
@@ -27,11 +35,3 @@ class Section(models.Model):
 
     class Meta:
         db_table = 'section'
-
-
-class WordSection(models.Model):
-    word_id = models.ForeignKey(word_model.Word, models.CASCADE, unique=True)
-    section_id = models.ForeignKey(Section, models.DO_NOTHING, unique=True)
-
-    class Meta:
-        db_table = 'word_section'

@@ -6,4 +6,5 @@ urlpatterns = [
     re_path('plan/', views.planView.as_view()),
     re_path('plans/', views.plansView.as_view()),
     re_path('sec/', views.secView.as_view()),
+    re_path('secbatch/', views.secbatchView.as_view()),
 ]

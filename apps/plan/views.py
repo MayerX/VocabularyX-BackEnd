@@ -170,13 +170,43 @@ class secView(View):
         )
 
 
-class secaddView(View):
+class secbatchView(View):
 
     def get(self, request):
         response = json.loads(request.body)
         section = Section.objects.get(id=response['id'])
-        word = Word.objects.get(id=response['id'])
-        section.words.add(word)
+        words_id = response['words']
+        words = list(Word.objects.in_bulk(words_id).values())
+        section.words.set(words)
+
+        return JsonResponse(
+            status='200',
+            data={
+                'msg': 'succeed'
+            }
+        )
+
+    def put(self, request):
+        response = json.loads(request.body)
+        section = Section.objects.get(id=response['id'])
+        words_id = response['words']
+        section.words.clear()
+        words = list(Word.objects.in_bulk(words_id).values())
+        section.words.set(words)
+
+        return JsonResponse(
+            status='200',
+            data={
+                'msg': 'succeed'
+            }
+        )
+
+    def delete(self, request):
+        response = json.loads(request.body)
+        section = Section.objects.get(id=response['id'])
+        words_id = response['words']
+        words = list(Word.objects.in_bulk(words_id).values())
+        section.words.remove(*words)
 
         return JsonResponse(
             status='200',
@@ -186,17 +216,17 @@ class secaddView(View):
         )
 
 
-class secdelView(View):
-
-    def get(self, request):
-        response = json.loads(request.body)
-        section = Section.objects.get(id=response['id'])
-        word = Word.objects.get(id=response['id'])
-        section.words.remove(word)
-
-        return JsonResponse(
-            status='200',
-            data={
-                'msg': 'succeed'
-            }
-        )
+# class secdelView(View):
+#
+#     def get(self, request):
+#         response = json.loads(request.body)
+#         section = Section.objects.get(id=response['id'])
+#         word = Word.objects.get(id=response['id'])
+#         section.words.remove(word)
+#
+#         return JsonResponse(
+#             status='200',
+#             data={
+#                 'msg': 'succeed'
+#             }
+#         )
