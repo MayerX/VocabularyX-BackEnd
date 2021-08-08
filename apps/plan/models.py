@@ -12,6 +12,7 @@ class Plan(models.Model):
     start_time = models.DateField(blank=True, null=True)
     end_time = models.DateField(blank=True, null=True)
     duration = models.IntegerField(blank=True, null=True)
+    word_num = models.IntegerField(blank=True, null=True)
 
     class Meta:
         db_table = 'plan'

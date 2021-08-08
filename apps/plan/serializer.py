@@ -9,6 +9,7 @@ class PlanSerializer(serializers.Serializer):
     start_time = serializers.DateField()
     end_time = serializers.DateField()
     duration = serializers.IntegerField()
+    word_num = serializers.IntegerField()
 
 
 class SectionSerializer(serializers.Serializer):
