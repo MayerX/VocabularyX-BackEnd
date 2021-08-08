@@ -15,10 +15,10 @@ keys = ['pos', 'phonetic', 'word_forms', 'audio_sources']
 
 class wView(View):
 
-    def get(self, request, word_id):
-        word = Word.objects.get(id=word_id)
+    def get(self, request):
+        response = json.loads(request.body)
+        word = Word.objects.get(id=response['id'])
         word_se = WordSerializer(word)
-
         word_dict = dict(word_se.data)
 
         for key in keys:
@@ -26,35 +26,38 @@ class wView(View):
                 word_dict[key] = demjson.decode(word_dict[key])
 
         data = {
-            "word": word_dict,
-            "msg": 'succeed'
+            "msg": 'succeed',
+            "word": word_dict
         }
 
-        return JsonResponse(data=data)
+        return JsonResponse(data=data, status='200')
 
 
 class wsView(View):
 
-    def get(self, request, word_spell):
-        word = Word.objects.get(spell=word_spell)
+    def get(self, request):
+        response = json.loads(request.body)
+        word = Word.objects.get(spell=response['spell'])
         word_se = WordSerializer(word)
-        word_dict = dict(word_se.data)
+        word_dict = word_se.data
 
         for key in keys:
             if word_dict[key] is not None:
                 word_dict[key] = demjson.decode(word_dict[key])
 
         data = {
+            "msg": "succeed",
             "word": word_dict,
-            "msg": "succeed"
         }
 
-        return JsonResponse(data=data)
+        return JsonResponse(data=data, status='200')
 
 
 class sView(View):
 
-    def get(self, request, fragment):
+    def get(self, request):
+        response = json.loads(request.body)
+        fragment = response['fragment']
         words = Word.objects.filter(spell__regex="^%s." % fragment)
         words_se = WordSerializer(words, many=True)
 
@@ -64,11 +67,11 @@ class sView(View):
                     word[key] = demjson.decode(word[key])
 
         data = {
+            "msg": 'succeed',
             "words": words_se.data,
-            "msg": 'succeed'
         }
 
-        return JsonResponse(data=data)
+        return JsonResponse(data=data, status='200')
         # return JsonResponse(words_se.data, safe=False)
 
 
@@ -79,18 +82,18 @@ class wlsView(View):
         wordlists_se = WordlistSerializer(wordlists, many=True)
 
         data = {
+            "msg": "succeed",
             "wordlists": wordlists_se.data,
-            "msg": "succeed"
         }
 
-        return JsonResponse(data=data, safe=False)
+        return JsonResponse(data=data, status='200')
 
 
 class wlView(View):
 
     def get(self, request):
-        id = request.GET['id']
-        wordlist = Wordlist.objects.get(id=id)
+        response = json.loads(request.body)
+        wordlist = Wordlist.objects.get(id=response['id'])
         wordlist_se = WordlistSerializer(wordlist)
         words = wordlist_se.data['word']
 
@@ -100,17 +103,20 @@ class wlView(View):
                     word[key] = demjson.decode(word[key])
 
         data = {
+            "msg": "succeed",
             "wordlist": wordlist_se.data,
-            "msg": "succeed"
         }
 
         return JsonResponse(data=data, status='200')
 
     def post(self, request):
-        name = request.POST['name']
+        response = json.loads(request.body)
+
+        if 'name' not in response:
+            return JsonResponse(data={'msg': 'failure'}, status='400')
         id = str(uuid.uuid4())[-11:-1]
         new_wordlist = Wordlist.objects.create(id=id)
-        new_wordlist.name = name
+        new_wordlist.name = response['name']
         new_wordlist.word_count = 0
         new_wordlist.save()
 
@@ -122,15 +128,12 @@ class wlView(View):
         )
 
     def put(self, request):
-        id = request.GET['id']
-        wordlist = Wordlist.objects.get(id=id)
+        response = json.loads(request.body)
+        wordlist = Wordlist.objects.get(id=response['id'])
         num = Wordlist.word.all()
 
-        parms = str(request.body, 'utf-8').split('&')
-        for parm in parms:
-            parm = parm.split('=')
-            if parm[0] == 'name':
-                wordlist.name = parm[1]
+        if 'name' in response:
+            wordlist.name = response['name']
         wordlist.word_count = num
         wordlist.save()
 
@@ -142,8 +145,8 @@ class wlView(View):
         )
 
     def delete(self, request):
-        id = request.GET['id']
-        Wordlist.objects.get(id=id).delete()
+        response = json.loads(request.body)
+        Wordlist.objects.get(id=response['id']).delete()
 
         return JsonResponse(
             status=200,
@@ -153,31 +156,47 @@ class wlView(View):
         )
 
 
-class waddView(View):
+class wordbatchView(View):
 
-    def get(self, request, word_id, wordlist_id):
-        wordlist = Wordlist.objects.get(id=wordlist_id)
-        word = Word.objects.get(id=word_id)
-        wordlist.word.add(word)
+    def get(self, request):
+        response = json.loads(request.body)
+        wordlist = Wordlist.objects.get(id=response['id'])
+        words_id = response['words']
+        words = list(Word.objects.in_bulk(words_id).values())
+        wordlist.word.set(words)
 
         return JsonResponse(
+            status='200',
             data={
-                "msg": "succeed",
-            },
-            status='200'
+                'msg': 'succeed'
+            }
         )
 
-
-class wdelView(View):
-
-    def get(self, request, word_id, wordlist_id):
-        wordlist = Wordlist.objects.get(id=wordlist_id)
-        word = Word.objects.get(id=word_id)
-        wordlist.word.remove(word)
+    def put(self, request):
+        response = json.loads(request.body)
+        wordlist = Wordlist.objects.get(id=response['id'])
+        words_id = response['words']
+        wordlist.word.clear()
+        words = list(Word.objects.in_bulk(words_id).values())
+        wordlist.word.set(words)
 
         return JsonResponse(
-            data={
-                "msg": "succeed"
-            },
             status='200',
+            data={
+                'msg': 'succeed'
+            }
+        )
+
+    def delete(self, request):
+        response = json.loads(request.body)
+        wordlist = Wordlist.objects.get(id=response['id'])
+        words_id = response['words']
+        words = list(Word.objects.in_bulk(words_id).values())
+        wordlist.word.remove(*words)
+
+        return JsonResponse(
+            status='200',
+            data={
+                'msg': 'succeed'
+            }
         )
