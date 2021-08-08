@@ -1,3 +1,4 @@
+import json
 import uuid
 
 import demjson
@@ -21,7 +22,8 @@ class wView(View):
         word_dict = dict(word_se.data)
 
         for key in keys:
-            word_dict[key] = demjson.decode(word_dict[key])
+            if word_dict[key] is not None:
+                word_dict[key] = demjson.decode(word_dict[key])
 
         data = {
             "word": word_dict,
@@ -36,11 +38,11 @@ class wsView(View):
     def get(self, request, word_spell):
         word = Word.objects.get(spell=word_spell)
         word_se = WordSerializer(word)
-
         word_dict = dict(word_se.data)
 
         for key in keys:
-            word_dict[key] = demjson.decode(word_dict[key])
+            if word_dict[key] is not None:
+                word_dict[key] = demjson.decode(word_dict[key])
 
         data = {
             "word": word_dict,
