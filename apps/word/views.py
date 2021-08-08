@@ -8,6 +8,8 @@ from django.views import View
 from .models import Word, Wordlist
 from .serializer import WordSerializer, WordlistSerializer
 
+import djangorestframework_camel_case.util as util
+
 # Create your views here.
 
 keys = ['pos', 'phonetic', 'word_forms', 'audio_sources']
@@ -27,7 +29,7 @@ class wView(View):
 
         data = {
             "msg": 'succeed',
-            "word": word_dict
+            "word": util.camelize(word_dict)
         }
 
         return JsonResponse(data=data, status='200')
@@ -47,7 +49,7 @@ class wsView(View):
 
         data = {
             "msg": "succeed",
-            "word": word_dict,
+            "word": util.camelize(word_dict),
         }
 
         return JsonResponse(data=data, status='200')
@@ -68,7 +70,7 @@ class sView(View):
 
         data = {
             "msg": 'succeed',
-            "words": words_se.data,
+            "words": util.camelize(words_se.data),
         }
 
         return JsonResponse(data=data, status='200')
@@ -83,7 +85,7 @@ class wlsView(View):
 
         data = {
             "msg": "succeed",
-            "wordlists": wordlists_se.data,
+            "wordlists": util.camelize(wordlists_se.data),
         }
 
         return JsonResponse(data=data, status='200')
@@ -104,7 +106,7 @@ class wlView(View):
 
         data = {
             "msg": "succeed",
-            "wordlist": wordlist_se.data,
+            "wordlist": util.camelize(wordlist_se.data),
         }
 
         return JsonResponse(data=data, status='200')

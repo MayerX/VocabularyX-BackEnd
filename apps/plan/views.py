@@ -10,6 +10,8 @@ from apps.word.models import Word
 from .models import Plan, Section
 from .serializer import PlanSerializer, SectionSerializer
 
+import djangorestframework_camel_case.util as util
+
 keys = ['pos', 'phonetic', 'word_forms', 'audio_sources']
 
 
@@ -21,7 +23,7 @@ class plansView(View):
 
         data = {
             'msg': 'succeed',
-            'plans': plans_se.data
+            'plans': util.camelize(plans_se.data)
         }
 
         return JsonResponse(data=data, status='200')
@@ -39,7 +41,7 @@ class planView(View):
 
             data = {
                 'msg': 'succeed',
-                'plan': plan_se.data,
+                'plan': util.camelize(plan_se.data),
             }
 
             return JsonResponse(data=data, status='200')
@@ -105,7 +107,7 @@ class secView(View):
 
         data = {
             'msg': 'succeed',
-            'section': section_se.data
+            'section': util.camelize(section_se.data)
         }
 
         return JsonResponse(data=data, status='200')
