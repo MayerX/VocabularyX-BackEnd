@@ -2,8 +2,10 @@
 
 # Question
 
-- [ ] 修改`secadd`以及`wladd`API接口
-- [ ] 
+- [x] 修改`secadd`以及`wladd`API接口
+- [x] 添加关于section的批处理API接口
+	- [x] update接口
+	- [x] delete接口
 
 # Entities
 
@@ -396,18 +398,33 @@ interface Plan {
 
 - 请求参数
 
-| 参数名 | 类型   | 说明         |
-| ------ | ------ | ------------ |
-| id     | string | 时间计划表ID |
+| 参数名 | 类型 | 说明 |
+| ------ | ---- | ---- |
+| null   | null | Null |
 
 - 返回数据
 
 ```json
 {
-	时间计划表对象{
-		"id": string,
-		···时间计划表对象
-	}
+    "msg": "succeed",
+    "plans": [
+        {
+            "id": "04f3c460b8",
+            "name": "test",
+            "start_time": "2021-08-08",
+            "end_time": "2021-08-08",
+            "duration": 0,
+            "word_num": 100
+        },
+        {
+            "id": "c2245aaae1",
+            "name": "test1",
+            "start_time": "2021-08-08",
+            "end_time": "2021-08-08",
+            "duration": 0,
+            "word_num": 120
+        }
+    ]
 }
 ```
 
@@ -427,11 +444,15 @@ interface Plan {
 
 ```json
 {
-	"id": string,
-	···时间计划表的基本属性
-	"secs": [
-		···section的基本属性
-	]
+    "msg": "succeed",
+    "plan": {
+        "id": "04f3c460b8",
+        "name": "test",
+        "start_time": "2021-08-08",
+        "end_time": "2021-08-08",
+        "duration": 0,
+        "word_num": 100
+    }
 }
 ```
 
@@ -571,45 +592,62 @@ interface Plan {
 }
 ```
 
-## `/secadd`
+## `/secbatch`
 
-### GET 请求
+### GET请求
 
-某个单词加入到某个计划
+单词列表加入到某个计划
 
 - 请求参数
 
-| 参数名    | 类型   | 说明   |
-| --------- | ------ | ------ |
-| wordId    | string | 单词ID |
-| sectionId | string | 计划ID |
+| 参数名 | 类型         | 说明     |
+| ------ | ------------ | -------- |
+| id     | string       | 计划ID   |
+| words  | list(string) | 单词列表 |
 
 - 返回数据
 
 ```json
 {
-    "wls": [ WordList ]
+    "msg": "succeed"
 }
 ```
 
-## `/secdel`
+### PUT请求
 
-### GET 请求
-
-在某个计划中删除某个单词
+单词列表更新到某个计划
 
 - 请求参数
 
-| 参数名    | 类型   | 说明   |
-| --------- | ------ | ------ |
-| wordId    | string | 单词ID |
-| sectionId | string | 计划ID |
+| 参数名 | 类型         | 说明     |
+| ------ | ------------ | -------- |
+| id     | string       | 计划ID   |
+| words  | list(string) | 单词列表 |
 
 - 返回数据
 
 ```json
 {
-    "wls": [ WordList ]
+    "msg": "succeed"
+}
+```
+
+### DELETE请求
+
+某个计划删除单词序列
+
+- 请求参数
+
+| 参数名 | 类型         | 说明     |
+| ------ | ------------ | -------- |
+| id     | string       | 计划ID   |
+| words  | list(string) | 单词列表 |
+
+- 返回数据
+
+```json
+{
+    "msg": "succeed"
 }
 ```
 

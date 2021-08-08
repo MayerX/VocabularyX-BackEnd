@@ -214,19 +214,3 @@ class secbatchView(View):
                 'msg': 'succeed'
             }
         )
-
-
-# class secdelView(View):
-#
-#     def get(self, request):
-#         response = json.loads(request.body)
-#         section = Section.objects.get(id=response['id'])
-#         word = Word.objects.get(id=response['id'])
-#         section.words.remove(word)
-#
-#         return JsonResponse(
-#             status='200',
-#             data={
-#                 'msg': 'succeed'
-#             }
-#         )
