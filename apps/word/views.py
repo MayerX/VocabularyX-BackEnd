@@ -17,9 +17,8 @@ keys = ['pos', 'phonetic', 'word_forms', 'audio_sources']
 
 class wView(View):
 
-    def get(self, request):
-        response = json.loads(request.body)
-        word = Word.objects.get(id=response['id'])
+    def get(self, request, word_id):
+        word = Word.objects.get(id=word_id)
         word_se = WordSerializer(word)
         word_dict = dict(word_se.data)
 
@@ -37,9 +36,8 @@ class wView(View):
 
 class wsView(View):
 
-    def get(self, request):
-        response = json.loads(request.body)
-        word = Word.objects.get(spell=response['spell'])
+    def get(self, request, word_spell):
+        word = Word.objects.get(spell=word_spell)
         word_se = WordSerializer(word)
         word_dict = word_se.data
 
@@ -57,9 +55,7 @@ class wsView(View):
 
 class sView(View):
 
-    def get(self, request):
-        response = json.loads(request.body)
-        fragment = response['fragment']
+    def get(self, request, fragment):
         words = Word.objects.filter(spell__regex="^%s." % fragment)
         words_se = WordSerializer(words, many=True)
 
